@@ -1,1 +1,16 @@
-
+{
+  "name": "MCGA Coin",
+  "symbol": "MCGA",
+  "type": "BEP20",
+  "decimals": 18,
+  "description": "MCGA Coin is a community token inspired by memes and the spirit of freedom.",
+  "website": "https://mcgacoin.github.io/mcga-coin-site/",
+  "explorer": "https://bscscan.com/token/0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297",
+  "status": "active",
+  "id": "0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297",
+  "links": {
+    "twitter": "https://x.com/CoinMCGA",
+    "whitepaper": "https://github.com/MCGACoin/mcga-coin-site/assets/whitepaper.pdf"
+  },
+  "logoURI": "https://i.imgur.com/8RM29T0.png"
+}
