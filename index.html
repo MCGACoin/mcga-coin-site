@@ -4,15 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MCGA Coin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
-      color: #333;
+      background: url('assets/mcga-banner.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
       text-align: center;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
     }
     header {
       background-color: #e30613;
@@ -29,6 +38,21 @@
       margin: 0 auto 2rem;
       padding: 1.5rem;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      color: #000;
+    }
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+    }
+    a {
+      color: #e30613;
+      text-decoration: none;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-align: center;
     }
     .download-btn {
       background: linear-gradient(90deg, #ff0033, #ff1a66);
@@ -40,36 +64,15 @@
       text-decoration: none;
       border-radius: 12px;
       transition: background 0.3s ease;
-      display: inline-block;
-      margin: 2rem 0;
     }
     .download-btn:hover {
       background: linear-gradient(90deg, #cc002a, #e6004d);
     }
-    .buy-btn {
-      display: inline-block;
-      padding: 14px 28px;
-      background: linear-gradient(135deg, #ff414d, #ff9a00);
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 12px;
-      text-decoration: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      transition: transform 0.2s ease-in-out;
-    }
-    footer {
-      background-color: #333;
-      color: white;
-      padding: 1rem;
-    }
-    a {
-      color: #e30613;
-      text-decoration: none;
-    }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="overlay"></div>
   <header>
     <h1>MCGA Coin</h1>
     <p>The Strongest Coin North of the Wall. Make Canada Great Again</p>
@@ -77,27 +80,51 @@
 
   <section>
     <h2>What is the MCGA Coin about?</h2>
-    <p>MCGA Coin is our answer to Trump Coin and a meme coin that will unite Canadians all around the world, showing everyone that together we are ready to withstand any challenge. Inspired by the spirit of unity, freedom, and the fight for justice, MCGA Coin represents the strength of the Canadian nation and its people. We’re creating a token that’s not just part of the blockchain community but a true movement that brings together those who believe in the values of liberty, equality, and fraternity.</p>
+    <p>MCGA Coin is our answer to Trump Coin and a meme coin that will unite Canadians all around the world, 
+      showing everyone that together we are ready to withstand any challenge.
+      Inspired by the spirit of unity, freedom, and the fight for justice, 
+      MCGA Coin represents the strength of the Canadian nation and its people.
+      We’re creating a token that’s not just part of the blockchain community but a true movement 
+      that brings together those who believe in the values of liberty, equality, and fraternity.</p>
 
     <h2>What makes MCGA Coin unique?</h2>
-    <p>MCGA Coin — The Token of Unity for All Canadians. The total supply of MCGA Coin is precisely matched to the current population of Canada — 40,152,683 tokens — symbolizing that every citizen is represented. This token isn’t just a meme — it’s a statement.</p>
+    <p>MCGA Coin — The Token of Unity for All Canadians
+    The total supply of MCGA Coin is precisely matched to the current population of Canada — 40,152,683
+    tokens — symbolizing that every citizen is represented. This token isn’t just a meme — it’s a statement. 
+    Inspired by the global meme coin movement, MCGA (Make Canada Great Again) Coin aims to unite Canadians at home and abroad, reminding the world that together we can overcome any challenge.</p>
 
-    <h2>History of MCGA</h2>
-    <p>More than just digital currency, MCGA Coin is a cultural symbol of Canadian resilience, pride, and community.</p>
+    <h2>History of MCGA </h2>
+    <p>
+    More than just digital currency, MCGA Coin is a cultural symbol of Canadian resilience, pride, and community.
+    </p>
 
     <h2>What's next for MCGA Coin?</h2>
-    <p>We plan to build a strong and engaged Canadian community around the MCGA Coin by expanding our presence on social media and launching a community website. We will list MCGA Coin on decentralized exchanges, initiate liquidity programs, and collaborate with creators and developers to expand the meme ecosystem. Long-term, we aim to turn MCGA Coin into a cultural symbol that supports community-driven initiatives and charitable causes throughout Canada and beyond.</p>
+    <p>Next Steps for MCGA Coin
+    We plan to build a strong and engaged Canadian community around the MCGA Coin by expanding our presence on social media and launching a community website.
+    We will list MCGA Coin on decentralized exchanges, initiate liquidity programs, and collaborate with creators and developers to expand the meme ecosystem.
+    Long-term, we aim to turn MCGA Coin into a cultural symbol that supports community-driven initiatives and charitable causes throughout Canada and beyond.</p>
   </section>
 
   <section class="tokenomics">
-    <h2>Tokenomics</h2>
-    <p><strong>Blockchain:</strong> BNB Chain (BSC)</p>
+    <h2>Tokenomic</h2>
+    <p><strong>Blockchain</strong> BNB Chain (BSC)</p>
     <p><strong>Ticker:</strong> MCGA</p>
     <p><strong>Total Supply:</strong> 40,500,000 MCGA (representing the population of Canada)</p>
     <p><strong>Contract:</strong> <em>0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297</em></p>
   </section>
 
-  <a href="https://pancakeswap.finance/swap?outputCurrency=0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297" class="buy-btn" target="_blank">
+  <a href="https://pancakeswap.finance/swap?outputCurrency=0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297" target="_blank" style="
+    display: inline-block;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #ff414d, #ff9a00);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease-in-out;
+  ">
     🚀 Buy MCGA Coin on PancakeSwap
   </a>
 
@@ -109,8 +136,8 @@
   </section>
 
   <section>
-    <h2>Download the MCGA Coin Whitepaper</h2>
-    <a href="assets/MCGA_Coin_Whitepaper.pdf" class="download-btn" download>
+    <h1>Download the MCGA Coin Whitepaper</h1>
+    <a href="MCGA_Coin_Whitepaper.pdf" class="download-btn" download>
       📄 Download PDF
     </a>
   </section>
