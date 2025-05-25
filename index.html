@@ -343,7 +343,7 @@ function checkDownloadStatus() {
   }
 }
 
-async function buyStickerPack() {
+async function buyStickerPack(event) {
   if (typeof window.ethereum === 'undefined') {
     if (isMobile()) {
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
