@@ -389,8 +389,13 @@ function hidePreview(el) {
 
 function toggleStickerList() {
   const list = document.getElementById('stickerPackList');
-  list.classList.toggle('hidden');
+  if (list.classList.contains('hidden')) {
+    list.classList.remove('hidden');
+  } else {
+    list.classList.add('hidden');
+  }
 }
+
 
 </script>
 
