@@ -215,16 +215,18 @@
 
   <button class="pay-btn" onclick="toggleStickerList()">🎁 View stickers</button>
 
-  <div id="stickerPackList" class="hidden">
-    <div class="sticker-item" 
-         onmouseenter="this.querySelector('.sticker-preview').classList.remove('hidden')" 
-         onmouseleave="this.querySelector('.sticker-preview').classList.add('hidden')">
-      <div class="sticker-info">
-        <p><strong>MCGA Starter Pack</strong></p>
-        <p>10 MCGA</p>
-        <button onclick="buyStickerPack()">Select</button>
-      </div>
-      <div class="sticker-preview hidden">
+<div id="stickerPackList" class="hidden">
+  <div class="sticker-item" 
+       onmouseenter="showPreview(this)" 
+       onmouseleave="hidePreview(this)">
+       
+    <div class="sticker-info">
+      <p><strong>MCGA Starter Pack</strong></p>
+      <p>10 MCGA</p>
+      <button onclick="buyStickerPack()">Select</button>
+    </div>
+    
+    <div class="sticker-preview hidden">
         <img src="https://i.imgur.com/V0pCT8E.png" alt="Sticker 1">
         <img src="https://i.imgur.com/1neUpGz.png" alt="Sticker 2">
         <img src="https://i.imgur.com/hU0YhKT.png" alt="Sticker 3">
@@ -299,6 +301,18 @@
       function toggleStickerList() {
     document.getElementById('stickerPackList').classList.toggle('hidden');
   }
+    <script>
+  function showPreview(el) {
+    const preview = el.querySelector('.sticker-preview');
+    if (preview) preview.classList.remove('hidden');
+  }
+
+  function hidePreview(el) {
+    const preview = el.querySelector('.sticker-preview');
+    if (preview) preview.classList.add('hidden');
+  }
+
+</script>
   </script>
 
 </body>
