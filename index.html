@@ -273,17 +273,18 @@
 <script>
   const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
   const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
-  const amount = '10000000000000000000'; // 10 MCGA with 18 decimals
+  const amount = '10000000000000000000'; // 10 MCGA (18 decimals)
+
   const ABI = [
     {
-      "constant": false,
-      "inputs": [
-        { "name": "_to", "type": "address" },
-        { "name": "_value", "type": "uint256" }
+      constant: false,
+      inputs: [
+        { name: '_to', type: 'address' },
+        { name: '_value', type: 'uint256' }
       ],
-      "name": "transfer",
-      "outputs": [{ "name": "", "type": "bool" }],
-      "type": "function"
+      name: 'transfer',
+      outputs: [{ name: '', type: 'bool' }],
+      type: 'function'
     }
   ];
 
@@ -296,7 +297,7 @@
 
       try {
         await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
-        document.getElementById('downloadLink').classList.remove('hidden');
+        alert("Transaction successful!");
       } catch (err) {
         alert('Transaction failed or cancelled.');
         console.error(err);
@@ -306,7 +307,6 @@
     }
   }
 
- 
   function showPreview(el) {
     const preview = el.querySelector('.sticker-preview');
     if (preview) preview.classList.remove('hidden');
@@ -322,6 +322,7 @@
     list.classList.toggle('hidden');
   }
 </script>
+
 
 
 </body>
