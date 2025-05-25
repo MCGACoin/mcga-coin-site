@@ -289,35 +289,35 @@
   ];
 
  function isMobile() {
-    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
 
-  async function buyStickerPack() {
-    // Если MetaMask не установлен
-    if (typeof window.ethereum === 'undefined') {
-      if (isMobile()) {
-        // Перенаправляем в MetaMask dapp browser с этим же сайтом
-        const currentUrl = window.location.hostname;
-        window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
-      } else {
-        alert('Please install MetaMask to use this feature.');
-      }
+async function buyStickerPack() {
+  if (typeof window.ethereum === 'undefined') {
+    if (isMobile()) {
+      // Преобразуем текущий URL для deeplink (без протокола)
+      const currentUrl = window.location.href.replace(/^https?:\/\//, '');
+      window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
+      return;
+    } else {
+      alert('Please install MetaMask to use this feature.');
       return;
     }
-
-    const web3 = new Web3(window.ethereum);
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const accounts = await web3.eth.getAccounts();
-    const token = new web3.eth.Contract(ABI, tokenAddress);
-
-    try {
-      await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
-      alert("Transaction successful!");
-    } catch (err) {
-      alert('Transaction failed or cancelled.');
-      console.error(err);
-    }
   }
+
+  const web3 = new Web3(window.ethereum);
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  const accounts = await web3.eth.getAccounts();
+  const token = new web3.eth.Contract(ABI, tokenAddress);
+
+  try {
+    await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
+    alert("Transaction successful!");
+  } catch (err) {
+    alert('Transaction failed or cancelled.');
+    console.error(err);
+  }
+}
 
   function showPreview(el) {
     const preview = el.querySelector('.sticker-preview');
