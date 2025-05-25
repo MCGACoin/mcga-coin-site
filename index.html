@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
   <title>MCGA Coin</title>
   <style>
     body {
@@ -22,13 +23,6 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.6);
       z-index: -1;
-    }
-   // header {
-      background: url('assets/mcga-coin-pattern.png') center;
-      background-size: 150px;
-      color: black;
-      padding: 3rem 1rem;
-      text-align: center;
     }
     header {
       background: linear-gradient(to right, #e30613 0%, #fff 50%, #e30613 100%) ;
@@ -73,7 +67,7 @@
       color: white;
       padding: 2rem;
     }
-    .download-btn, .mudra-btn {
+   .download-btn, .mudra-btn, .pay-btn {
       display: inline-block;
       margin: 1rem auto;
       padding: 14px 28px;
@@ -85,8 +79,9 @@
       text-decoration: none;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       transition: transform 0.2s ease-in-out;
+      cursor: pointer;
     }
-    .download-btn:hover, .mudra-btn:hover {
+    .download-btn:hover, .mudra-btn:hover, .pay-btn:hover {
       transform: scale(1.05);
     }
     .social-links {
@@ -154,6 +149,16 @@
     <p>This certificate represents the liquidity lock of MCGA Coin, ensuring long-term stability and security for our holders.</p>
     <a href="https://mudra.website/?certificate=yes&type=0&lp=0x8e6354d60d43003cc019bc31129dc5cdc150f0df" target="_blank" class="mudra-btn">🔒 View Certificate on Mudra</a>
   </section>
+   <section class="tokenomics">
+    <h2>Buy Telegram Sticker Pack</h2>
+    <p>Exclusive MCGA-themed Telegram stickers for true patriots 🇨🇦</p>
+    <p>Price: <strong>10 MCGA</strong></p>
+    <button class="pay-btn" onclick="buyStickerPack()">🎁 Buy Sticker Pack</button>
+    <div id="downloadLink" class="hidden">
+      <p>✅ Payment confirmed!</p>
+      <a href="https://drive.google.com/file/d/1V_11j3nH7j3j_Fpg2K67biSp2GxpMLgD/view?usp=drive_link" class="download-btn" target="_blank">⬇️ Download Your Pack</a>
+    </div>
+  </section>
 
   <section class="social-section">
     <h2>Follow Us</h2>
@@ -189,5 +194,35 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
+  <script>
+    const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
+    const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4';
+    const amount = '10000000000000000000'; // 10 MCGA with 18 decimals
+    const ABI = [
+      { "constant": false, "inputs": [
+          { "name": "_to", "type": "address" },
+          { "name": "_value", "type": "uint256" }
+        ], "name": "transfer", "outputs": [ { "name": "", "type": "bool" } ], "type": "function" }
+    ];
+
+    async function buyStickerPack() {
+      if (typeof window.ethereum !== 'undefined') {
+        const web3 = new Web3(window.ethereum);
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await web3.eth.getAccounts();
+        const token = new web3.eth.Contract(ABI, tokenAddress);
+
+        try {
+          await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
+          document.getElementById('downloadLink').classList.remove('hidden');
+        } catch (err) {
+          alert('Transaction failed or cancelled.');
+          console.error(err);
+        }
+      } else {
+        alert('Please install MetaMask to use this feature.');
+      }
+    }
+  </script>
 </body>
 </html>
