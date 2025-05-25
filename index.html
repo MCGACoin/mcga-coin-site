@@ -106,6 +106,62 @@
     .social-icon img:hover {
       transform: scale(1.1);
     }
+       .sticker-item {
+      border: 2px solid #ccc;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      transition: box-shadow 0.2s ease;
+      background-color: #fafafa;
+    }
+
+    .sticker-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .sticker-info {
+      text-align: left;
+    }
+
+    .sticker-info button {
+      margin-top: 0.5rem;
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+     .sticker-info button:hover {
+      background-color: #2e7d32;
+    }
+     .sticker-preview {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      margin-top: 0.5rem;
+      z-index: 10;
+    }
+        .slogan {
+      font-style: italic;
+      color: #888;
+      font-size: 0.95rem;
+    }
+     .sticker-preview img {
+      width: 60px;
+      border-radius: 6px;
+    }
   </style>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 </head>
@@ -153,15 +209,28 @@
     <a href="https://mudra.website/?certificate=yes&type=0&lp=0x8e6354d60d43003cc019bc31129dc5cdc150f0df" target="_blank" class="mudra-btn">🔒 View Certificate on Mudra</a>
   </section>
    <section class="tokenomics">
-    <h2>Buy Telegram Sticker Pack</h2>
-    <p>Exclusive MCGA-themed Telegram stickers for true patriots 🇨🇦</p>
-    <p>Price: <strong>10 MCGA</strong></p>
-    <button class="pay-btn" onclick="buyStickerPack()">🎁 Buy Sticker Pack</button>
-    <div id="downloadLink" class="hidden">
-     <p>✅ Payment confirmed!</p>
-     <a href="https://drive.google.com/file/d/1V_11j3nH7j3j_Fpg2K67biSp2GxpMLgD/view?usp=drive_link" class="download-btn" target="_blank">⬇️ Download Your Pack</a>
-   </div>
- </section>
+  <h2>Стикеры MCGA: Настоящий канадский вайб!</h2>
+  <p>Выбери свой стикер-пак ниже и укрась Telegram по-канадски 🍁</p>
+  <p class="slogan">«От клена — для клена!»</p>
+
+  <button class="pay-btn" onclick="toggleStickerList()">🎁 Посмотреть стикеры</button>
+
+  <div id="stickerPackList" class="hidden">
+    <div class="sticker-item" 
+         onmouseenter="this.querySelector('.sticker-preview').classList.remove('hidden')" 
+         onmouseleave="this.querySelector('.sticker-preview').classList.add('hidden')">
+      <div class="sticker-info">
+        <p><strong>MCGA Starter Pack</strong></p>
+        <p>10 MCGA</p>
+        <button onclick="buyStickerPack()">Выбрать</button>
+      </div>
+      <div class="sticker-preview hidden">
+        <img src="https://i.imgur.com/ZzSKwrF.png" alt="Sticker 1">
+        <img src="https://i.imgur.com/1neUpGz.png" alt="Sticker 2">
+        <img src="https://i.imgur.com/hU0YhKT.png" alt="Sticker 3">
+      </div>
+    </div>
+  </div>
 
   <section class="social-section">
     <h2>Follow Us</h2>
@@ -227,5 +296,10 @@
       }
     }
   </script>
+  <script>
+  function toggleStickerList() {
+    document.getElementById('stickerPackList').classList.toggle('hidden');
+  }
+</script>
 </body>
 </html>
