@@ -297,12 +297,7 @@
       } else {
         alert('Please install MetaMask to use this feature.');
       }
-    }
-      function toggleStickerList() {
-    document.getElementById('stickerPackList').classList.toggle('hidden');
-  }
-   
-  function showPreview(el) {
+ function showPreview(el) {
     const preview = el.querySelector('.sticker-preview');
     if (preview) preview.classList.remove('hidden');
   }
@@ -310,6 +305,15 @@
   function hidePreview(el) {
     const preview = el.querySelector('.sticker-preview');
     if (preview) preview.classList.add('hidden');
+  }
+
+  function toggleStickerList() {
+    const list = document.getElementById('stickerPackList');
+    list.classList.toggle('hidden');
+  }
+
+  function buyStickerPack() {
+    alert("You selected a sticker pack!");
   }
 
   </script>
