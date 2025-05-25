@@ -224,7 +224,7 @@
     <div class="sticker-info">
       <p><strong>MCGA Starter Pack</strong></p>
       <p>10 MCGA</p>
-      <button onclick="buyStickerPack()">Select</button>
+      <button onclick="buyStickerPack(event)">Select</button>
     </div>
     
     <div class="sticker-preview hidden">
@@ -288,24 +288,26 @@
     }
   ];
 
-  async function buyStickerPack() {
-    if (typeof window.ethereum !== 'undefined') {
-      const web3 = new Web3(window.ethereum);
+  async function buyStickerPack(event) {
+  event.stopPropagation(); // Чтобы событие клика не "убивало" hover preview
+  
+  if (typeof window.ethereum !== 'undefined') {
+    const web3 = new Web3(window.ethereum);
+    try {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       const accounts = await web3.eth.getAccounts();
       const token = new web3.eth.Contract(ABI, tokenAddress);
 
-      try {
-        await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
-        alert("Transaction successful!");
-      } catch (err) {
-        alert('Transaction failed or cancelled.');
-        console.error(err);
-      }
-    } else {
-      alert('Please install MetaMask to use this feature.');
+      await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
+      alert("Transaction successful!");
+    } catch (err) {
+      alert('Transaction failed or cancelled.');
+      console.error(err);
     }
+  } else {
+    alert('Please install MetaMask to use this feature.');
   }
+}
 
   function showPreview(el) {
     const preview = el.querySelector('.sticker-preview');
