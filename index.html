@@ -271,31 +271,75 @@
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
 <script>
-  const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
-  const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
-  const amount = '10000000000000000000'; // 10 MCGA (18 decimals)
+const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
+const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
+const amount = '10000000000000000000'; // 10 MCGA (18 decimals)
+const downloadLink = 'https://drive.google.com/uc?export=download&id=1V_11j3nH7j3j_Fpg2K67biSp2GxpMLgD'; // прямая ссылка для скачивания
 
-  const ABI = [
-    {
-      constant: false,
-      inputs: [
-        { name: '_to', type: 'address' },
-        { name: '_value', type: 'uint256' }
-      ],
-      name: 'transfer',
-      outputs: [{ name: '', type: 'bool' }],
-      type: 'function'
-    }
-  ];
+const ABI = [
+  {
+    constant: false,
+    inputs: [
+      { name: '_to', type: 'address' },
+      { name: '_value', type: 'uint256' }
+    ],
+    name: 'transfer',
+    outputs: [{ name: '', type: 'bool' }],
+    type: 'function'
+  }
+];
 
- function isMobile() {
+function isMobile() {
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function showDownloadButton() {
+  let btn = document.getElementById('downloadStickerBtn');
+  if (!btn) {
+    btn = document.createElement('a');
+    btn.id = 'downloadStickerBtn';
+    btn.href = downloadLink;
+    btn.textContent = '📥 Скачать стикер пак';
+    btn.className = 'download-btn';
+    btn.setAttribute('download', '');
+    btn.style.display = 'inline-block';
+    btn.style.marginTop = '1rem';
+
+    btn.onclick = function(e) {
+      if (localStorage.getItem('stickerDownloaded')) {
+        e.preventDefault();
+        alert('Ссылка уже использована для скачивания.');
+        return false;
+      }
+      // Отмечаем скачивание
+      localStorage.setItem('stickerDownloaded', 'true');
+      // Можно сразу скрыть кнопку
+      btn.style.display = 'none';
+      alert('Спасибо за покупку! Скачивание началось.');
+    }
+
+    const container = document.getElementById('stickerPackList');
+    container.parentNode.insertBefore(btn, container.nextSibling);
+  }
+  btn.style.display = 'inline-block';
+}
+
+function hideDownloadButton() {
+  const btn = document.getElementById('downloadStickerBtn');
+  if (btn) btn.style.display = 'none';
+}
+
+function checkDownloadStatus() {
+  if (localStorage.getItem('stickerPurchased')) {
+    showDownloadButton();
+  } else {
+    hideDownloadButton();
+  }
 }
 
 async function buyStickerPack() {
   if (typeof window.ethereum === 'undefined') {
     if (isMobile()) {
-      // Преобразуем текущий URL для deeplink (без протокола)
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
       window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
       return;
@@ -313,26 +357,34 @@ async function buyStickerPack() {
   try {
     await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
     alert("Transaction successful!");
+    localStorage.setItem('stickerPurchased', 'true'); // отметка покупки
+    showDownloadButton();
   } catch (err) {
     alert('Transaction failed or cancelled.');
     console.error(err);
   }
 }
 
-  function showPreview(el) {
-    const preview = el.querySelector('.sticker-preview');
-    if (preview) preview.classList.remove('hidden');
-  }
+// Инициализация при загрузке страницы
+window.addEventListener('load', () => {
+  checkDownloadStatus();
+});
 
-  function hidePreview(el) {
-    const preview = el.querySelector('.sticker-preview');
-    if (preview) preview.classList.add('hidden');
-  }
+function showPreview(el) {
+  const preview = el.querySelector('.sticker-preview');
+  if (preview) preview.classList.remove('hidden');
+}
 
-  function toggleStickerList() {
-    const list = document.getElementById('stickerPackList');
-    list.classList.toggle('hidden');
-  }
+function hidePreview(el) {
+  const preview = el.querySelector('.sticker-preview');
+  if (preview) preview.classList.add('hidden');
+}
+
+function toggleStickerList() {
+  const list = document.getElementById('stickerPackList');
+  list.classList.toggle('hidden');
+}
+
 </script>
 
 
