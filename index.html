@@ -299,30 +299,38 @@ function showDownloadButton() {
     btn = document.createElement('a');
     btn.id = 'downloadStickerBtn';
     btn.href = downloadLink;
-    btn.textContent = '📥 Скачать стикер пак';
+    btn.textContent = '📥 Download StickerPack';
     btn.className = 'download-btn';
     btn.setAttribute('download', '');
     btn.style.display = 'inline-block';
     btn.style.marginTop = '1rem';
 
+    // <-- Вот добавляем позиционирование и z-index:
+    btn.style.position = 'relative';
+    btn.style.zIndex = '20';
+
     btn.onclick = function(e) {
       if (localStorage.getItem('stickerDownloaded')) {
         e.preventDefault();
-        alert('Ссылка уже использована для скачивания.');
+        alert('The link has already been used for downloading.');
         return false;
       }
       // Отмечаем скачивание
       localStorage.setItem('stickerDownloaded', 'true');
       // Можно сразу скрыть кнопку
       btn.style.display = 'none';
-      alert('Спасибо за покупку! Скачивание началось.');
+      alert('
+Thanks for buying! Download has started.');
     }
 
     const container = document.getElementById('stickerPackList');
     container.parentNode.insertBefore(btn, container.nextSibling);
   }
   btn.style.display = 'inline-block';
+  btn.style.position = 'relative'; // на случай если уже есть btn
+  btn.style.zIndex = '20';
 }
+
 
 function hideDownloadButton() {
   const btn = document.getElementById('downloadStickerBtn');
