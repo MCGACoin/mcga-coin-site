@@ -269,35 +269,44 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
-  <script>
-    const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
-    const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
-    const amount = '10000000000000000000'; // 10 MCGA with 18 decimals
-    const ABI = [
-      { "constant": false, "inputs": [
-          { "name": "_to", "type": "address" },
-          { "name": "_value", "type": "uint256" }
-        ], "name": "transfer", "outputs": [ { "name": "", "type": "bool" } ], "type": "function" }
-    ];
+<script>
+  const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
+  const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
+  const amount = '10000000000000000000'; // 10 MCGA with 18 decimals
+  const ABI = [
+    {
+      "constant": false,
+      "inputs": [
+        { "name": "_to", "type": "address" },
+        { "name": "_value", "type": "uint256" }
+      ],
+      "name": "transfer",
+      "outputs": [{ "name": "", "type": "bool" }],
+      "type": "function"
+    }
+  ];
 
-    async function buyStickerPack() {
-      if (typeof window.ethereum !== 'undefined') {
-        const web3 = new Web3(window.ethereum);
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const accounts = await web3.eth.getAccounts();
-        const token = new web3.eth.Contract(ABI, tokenAddress);
+  async function buyStickerPack() {
+    if (typeof window.ethereum !== 'undefined') {
+      const web3 = new Web3(window.ethereum);
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await web3.eth.getAccounts();
+      const token = new web3.eth.Contract(ABI, tokenAddress);
 
-        try {
-          await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
-          document.getElementById('downloadLink').classList.remove('hidden');
-        } catch (err) {
-          alert('Transaction failed or cancelled.');
-          console.error(err);
-        }
-      } else {
-        alert('Please install MetaMask to use this feature.');
+      try {
+        await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
+        document.getElementById('downloadLink').classList.remove('hidden');
+      } catch (err) {
+        alert('Transaction failed or cancelled.');
+        console.error(err);
       }
- function showPreview(el) {
+    } else {
+      alert('Please install MetaMask to use this feature.');
+    }
+  }
+
+ 
+  function showPreview(el) {
     const preview = el.querySelector('.sticker-preview');
     if (preview) preview.classList.remove('hidden');
   }
@@ -310,8 +319,9 @@
   function toggleStickerList() {
     const list = document.getElementById('stickerPackList');
     list.classList.toggle('hidden');
+  }
+</script>
 
-  </script>
 
 </body>
 </html>
