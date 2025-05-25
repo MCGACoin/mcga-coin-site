@@ -297,7 +297,7 @@ async function buyStickerPack() {
     if (isMobile()) {
       // Преобразуем текущий URL для deeplink (без протокола)
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-      window.location.href = https://metamask.app.link/dapp/${currentUrl};
+      window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
       return;
     } else {
       alert('Please install MetaMask to use this feature.');
