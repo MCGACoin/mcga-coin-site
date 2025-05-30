@@ -423,6 +423,8 @@ function checkDownloadStatus() {
 }
 
 async function buyStickerPack(event) {
+   event.preventDefault();
+  event.stopPropagation();
   if (typeof window.ethereum === 'undefined') {
     if (isMobile()) {
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
