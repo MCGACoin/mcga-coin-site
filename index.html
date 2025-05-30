@@ -319,8 +319,14 @@ async function createOneTimeLink(userWallet) {
   // Записываем token в Supabase, с info о том, что не использован
    console.log('Inserting token:', token, 'user_wallet:', userWallet);
   const { data, error } = await supabaseClient
-    .from('stickers_links')
-    .insert([{ token: token, used: false, created_at: new Date().toISOString(), user_wallet: userWallet }]);
+  .from('stickers_links')
+  .insert([{
+    token: token,
+    used: false,
+    created_at: new Date().toISOString(),
+    user_wallet: userWallet,
+    link: downloadUrl
+  }]);
   console.log('Insert result:', data, error);
 
   if (error) {
