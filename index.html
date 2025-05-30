@@ -384,18 +384,13 @@ async function showDownloadButton(link) {
       }
 
       // Отмечаем токен как использованный
-    // Отмечаем токен как использованный (через fetch с заголовками)
-const { error: updateError } = await supabaseClient
+   const { error: updateError } = await supabaseClient
   .from('stickers_links')
   .update({ used: true }) // убрали used_at
   .eq('token', token);
 
 
 
-if (!updateRes.ok) {
-  alert('Failed to mark the link as used.');
-  return false;
-}
 
       console.log('Supabase insert data:', data, 'error:', error);
 
