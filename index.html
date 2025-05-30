@@ -306,7 +306,7 @@ function generateRandomToken(length = 24) {
   return token;
 }
 
-async function createOneTimeLink() {
+async function createOneTimeLink(userWallet) {
   const token = generateRandomToken();
   // Задаем ссылку на скачивание через Icedrive с параметром token
   const baseUrl = 'https://icemga.supabase.link/download?token='; // фиктивный, подменим ниже
@@ -317,10 +317,10 @@ async function createOneTimeLink() {
   const downloadUrl = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q?token=' + token;
 
   // Записываем token в Supabase, с info о том, что не использован
-   console.log('Inserting token:', token);
+   console.log('Inserting token:', token, 'user_wallet:', userWallet);
   const { data, error } = await supabaseClient
     .from('stickers_links')
-    .insert([{ token: token, used: false, created_at: new Date().toISOString() }]);
+    .insert([{ token: token, used: false, created_at: new Date().toISOString(), user_wallet: userWallet }]);
   console.log('Insert result:', data, error);
 
   if (error) {
@@ -452,7 +452,7 @@ async function buyStickerPack(event) {
     localStorage.setItem('stickerPurchased', 'true'); // отметка покупки
 
     // Создаем уникальную одноразовую ссылку в Supabase
-    const oneTimeLink = await createOneTimeLink();
+    const oneTimeLink = await createOneTimeLink(accounts[0]);
      console.log('Generated one-time link:', oneTimeLink);
     if (oneTimeLink) {
       await showDownloadButton(oneTimeLink);
