@@ -407,7 +407,8 @@ async function showDownloadButton(link) {
       alert('Thanks for buying! Download has started.');
 
       // Перенаправляем на реальный файл (открываем в новой вкладке)
-      window.open('https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q', '_blank');
+      window.open(btn.href, '_blank');
+
     };
 
     const container = document.getElementById('stickerPackList');
