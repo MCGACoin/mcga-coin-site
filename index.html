@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <title>MCGA Coin</title>
   <style>
     body {
@@ -270,130 +271,145 @@
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
 <script>
-const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
-const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
-const amount = '1000000000000000000000'; // 1000 MCGA (18 decimals)
-const downloadLink = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q'; // прямая ссылка для скачивания
+  const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
+  const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
+  const amount = '10000000000000000000'; // 1000 MCGA (18 decimals)
+  const downloadLink = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q'; // прямая ссылка для скачивания
 
-const ABI = [
-  {
-    constant: false,
-    inputs: [
-      { name: '_to', type: 'address' },
-      { name: '_value', type: 'uint256' }
-    ],
-    name: 'transfer',
-    outputs: [{ name: '', type: 'bool' }],
-    type: 'function'
-  }
-];
+  const ABI = [
+    {
+      constant: false,
+      inputs: [
+        { name: '_to', type: 'address' },
+        { name: '_value', type: 'uint256' }
+      ],
+      name: 'transfer',
+      outputs: [{ name: '', type: 'bool' }],
+      type: 'function'
+    },
+    {
+      constant: true,
+      inputs: [{ name: '_owner', type: 'address' }],
+      name: 'balanceOf',
+      outputs: [{ name: 'balance', type: 'uint256' }],
+      type: 'function'
+    }
+  ];
 
-function isMobile() {
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
+  // Supabase setup
+  const SUPABASE_URL = 'https://uemwtlwuqkuebkgofixi.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function showDownloadButton() {
-  let btn = document.getElementById('downloadStickerBtn');
-  if (!btn) {
-    btn = document.createElement('a');
-    btn.id = 'downloadStickerBtn';
-    btn.href = downloadLink;
-    btn.textContent = '📥 Download StickerPack';
-    btn.className = 'download-btn';
-    btn.setAttribute('download', '');
-    btn.style.display = 'inline-block';
-    btn.style.marginTop = '1rem';
+  let web3;
+  let userAccount;
 
-    // <-- Вот добавляем позиционирование и z-index:
-    btn.style.position = 'relative';
-    btn.style.zIndex = '20';
-
-    btn.onclick = function(e) {
-      if (localStorage.getItem('stickerDownloaded')) {
-        e.preventDefault();
-        alert('The link has already been used for downloading.');
-        return false;
+  async function initWeb3() {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+      try {
+        // Запрос доступа к аккаунтам
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAccount = accounts[0];
+        console.log('Connected account:', userAccount);
+      } catch (error) {
+        alert('User denied account access');
+        throw error;
       }
-      // Отмечаем скачивание
-      localStorage.setItem('stickerDownloaded', 'true');
-      // Можно сразу скрыть кнопку
-      btn.style.display = 'none';
-      alert('Thanks for buying! Download has started.');
-    }
-
-    const container = document.getElementById('stickerPackList');
-    container.parentNode.insertBefore(btn, container.nextSibling);
-  }
-  btn.style.display = 'inline-block';
-  btn.style.position = 'relative'; // на случай если уже есть btn
-  btn.style.zIndex = '20';
-}
-
-
-function hideDownloadButton() {
-  const btn = document.getElementById('downloadStickerBtn');
-  if (btn) btn.style.display = 'none';
-}
-
-function checkDownloadStatus() {
-  if (localStorage.getItem('stickerPurchased')) {
-    showDownloadButton();
-  } else {
-    hideDownloadButton();
-  }
-}
-
-async function buyStickerPack(event) {
-  if (typeof window.ethereum === 'undefined') {
-    if (isMobile()) {
-      const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-      window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
-      return;
     } else {
-      alert('Please install MetaMask to use this feature.');
-      return;
+      alert('Please install MetaMask!');
+      throw new Error('No web3 provider');
     }
   }
 
-  const web3 = new Web3(window.ethereum);
-  await window.ethereum.request({ method: 'eth_requestAccounts' });
-  const accounts = await web3.eth.getAccounts();
-  const token = new web3.eth.Contract(ABI, tokenAddress);
-
-  try {
-    await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
-    alert("Transaction successful!");
-    localStorage.setItem('stickerPurchased', 'true'); // отметка покупки
-    showDownloadButton();
-  } catch (err) {
-    alert('Transaction failed or cancelled.');
-    console.error(err);
+  async function checkBalance() {
+    const contract = new web3.eth.Contract(ABI, tokenAddress);
+    const balance = await contract.methods.balanceOf(userAccount).call();
+    console.log('Balance:', balance);
+    return balance;
   }
-}
 
-// Инициализация при загрузке страницы
-window.addEventListener('load', () => {
-  checkDownloadStatus();
-});
+  async function sendTransfer() {
+    const contract = new web3.eth.Contract(ABI, tokenAddress);
 
-function showPreview(el) {
-  const preview = el.querySelector('.sticker-preview');
-  if (preview) preview.classList.remove('hidden');
-}
-
-function hidePreview(el) {
-  const preview = el.querySelector('.sticker-preview');
-  if (preview) preview.classList.add('hidden');
-}
-
-function toggleStickerList() {
-  const list = document.getElementById('stickerPackList');
-  if (list.classList.contains('hidden')) {
-    list.classList.remove('hidden');
-  } else {
-    list.classList.add('hidden');
+    // Отправляем транзакцию
+    return contract.methods.transfer(receiver, amount).send({ from: userAccount });
   }
-}
+
+  async function storeLink(account, link) {
+    const { data, error } = await supabase
+      .from('stickers_links')
+      .insert([{ wallet: account.toLowerCase(), link: link }]);
+
+    if (error) {
+      console.error('Supabase insert error:', error);
+      throw error;
+    }
+    return data;
+  }
+
+  function toggleStickerList() {
+    const list = document.getElementById('stickerPackList');
+    if (list.classList.contains('hidden')) {
+      list.classList.remove('hidden');
+    } else {
+      list.classList.add('hidden');
+    }
+  }
+
+  function showPreview(elem) {
+    const preview = elem.querySelector('.sticker-preview');
+    if (preview) preview.classList.remove('hidden');
+  }
+
+  function hidePreview(elem) {
+    const preview = elem.querySelector('.sticker-preview');
+    if (preview) preview.classList.add('hidden');
+  }
+
+  async function buyStickerPack(event) {
+    event.stopPropagation();
+    try {
+      if (!web3) await initWeb3();
+
+      const balance = await checkBalance();
+      if (BigInt(balance) < BigInt(amount)) {
+        alert('Insufficient MCGA balance. You need at least 1000 MCGA.');
+        return;
+      }
+
+      // Подтверждение пользователем транзакции
+      alert('Please confirm the token transfer transaction in your wallet.');
+
+      const receipt = await sendTransfer();
+      console.log('Transaction receipt:', receipt);
+
+      alert('Payment successful! Generating your download link...');
+
+      // Сохраняем ссылку одноразово в Supabase
+      await storeLink(userAccount, downloadLink);
+
+      // Показываем кнопку загрузки
+      showDownloadButton();
+
+    } catch (error) {
+      console.error(error);
+      alert('Transaction failed or canceled.');
+    }
+  }
+
+  function showDownloadButton() {
+    if (!document.getElementById('downloadStickerBtn')) {
+      const btn = document.createElement('a');
+      btn.id = 'downloadStickerBtn';
+      btn.href = downloadLink;
+      btn.target = '_blank';
+      btn.className = 'download-btn';
+      btn.textContent = '⬇️ Download Your MCGA Sticker Pack';
+      document.querySelector('section.tokenomics').appendChild(btn);
+    }
+  }
 </script>
+
 </body>
 </html>
