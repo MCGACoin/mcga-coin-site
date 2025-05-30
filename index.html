@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-   <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet" />
   <title>MCGA Coin</title>
   <style>
     body {
@@ -211,38 +210,31 @@
     <a href="https://mudra.website/?certificate=yes&type=0&lp=0x8e6354d60d43003cc019bc31129dc5cdc150f0df" target="_blank" class="mudra-btn">🔒 View Certificate on Mudra</a>
   </section>
    <section class="tokenomics">
-    <h2>MCGA Stickers: A real Canadian vibe!</h2>
-    <p>Pick your sticker pack below and decorate your Telegram the Canadian way 🍁</p>
-    <p class="slogan">“Stickers for true patriots with a northern soul!”</p>
+  <h2>MCGA Stickers: A real Canadian vibe!</h2>
+  <p>Pick your sticker pack below and decorate your Telegram the Canadian way 🍁</p>
+  <p class="slogan">“Stickers for true patriots with a northern soul!”</p>
 
-    <button class="pay-btn" onclick="toggleStickerList()">🎁 View stickers</button>
-<div style="margin-bottom: 10px;">
-<button onclick="connectWallet()">Подключить кошелёк</button>
+  <button class="pay-btn" onclick="toggleStickerList()">🎁 View stickers</button>
 
-<div>
-  <button id="buy-btn" onclick="buyStickers()" disabled style="padding: 10px 20px;">
-    🛍 Купить стикерпак за 10 MCGA
-  </button>
-</div>
-    <div id="stickerPackList" class="hidden">
-      <div class="sticker-item" 
-           onmouseenter="showPreview(this)" 
-           onmouseleave="hidePreview(this)">
-         
-        <div class="sticker-info">
-          <p><strong>MCGA Starter Pack</strong></p>
-          <p>1000 MCGA</p>
-          <button onclick="buyStickerPack(event)">Select</button>
-        </div>
-        
-        <div class="sticker-preview hidden">
-          <img src="https://i.imgur.com/V0pCT8E.png" alt="Sticker 1" />
-          <img src="https://i.imgur.com/cgPlaRb.jpeg" alt="Sticker 2" />
-          <img src="https://i.imgur.com/bMb0Wld.jpeg" alt="Sticker 3" />
-        </div>
+<div id="stickerPackList" class="hidden">
+  <div class="sticker-item" 
+       onmouseenter="showPreview(this)" 
+       onmouseleave="hidePreview(this)">
+       
+    <div class="sticker-info">
+      <p><strong>MCGA Starter Pack</strong></p>
+      <p>1000 MCGA</p>
+      <button onclick="buyStickerPack(event)">Select</button>
+    </div>
+    
+    <div class="sticker-preview hidden">
+        <img src="https://i.imgur.com/V0pCT8E.png" alt="Sticker 1">
+        <img src="https://i.imgur.com/cgPlaRb.jpeg" alt="Sticker 2">
+        <img src="https://i.imgur.com/bMb0Wld.jpeg" alt="Sticker 3">
       </div>
     </div>
-  </section>
+  </div>
+     </section>
 
   <section class="social-section">
     <h2>Follow Us</h2>
@@ -278,119 +270,131 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
-<script type="module">
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
-import { EthereumProvider } from "https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.9.0/+esm";
+<script>
+const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
+const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
+const amount = '1000000000000000000000'; // 1000 MCGA (18 decimals)
+const downloadLink = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q'; // прямая ссылка для скачивания
 
-// Константы проекта
-const TOKEN_ADDRESS = "0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297";
-const PAYMENT_ADDRESS = "0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A";
-const REQUIRED_AMOUNT = ethers.parseUnits("10", 18); // 10 MCGA
-const SUPABASE_URL = "https://uemwtlwuqkuebkgofixi.supabase.co";
-const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w";
-const SUPABASE_TABLE = "stickers_links";
+const ABI = [
+  {
+    constant: false,
+    inputs: [
+      { name: '_to', type: 'address' },
+      { name: '_value', type: 'uint256' }
+    ],
+    name: 'transfer',
+    outputs: [{ name: '', type: 'bool' }],
+    type: 'function'
+  }
+];
 
-let provider;
-let signer;
+function isMobile() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
 
-// Подключение к кошельку
-async function connectWallet() {
-  try {
-    const wcProvider = await EthereumProvider.init({
-      projectId: "1f6d5419a5c25797a4fe124a2e7b4c8b",
-      chains: [56],
-      showQrModal: true,
-    });
+function showDownloadButton() {
+  let btn = document.getElementById('downloadStickerBtn');
+  if (!btn) {
+    btn = document.createElement('a');
+    btn.id = 'downloadStickerBtn';
+    btn.href = downloadLink;
+    btn.textContent = '📥 Download StickerPack';
+    btn.className = 'download-btn';
+    btn.setAttribute('download', '');
+    btn.style.display = 'inline-block';
+    btn.style.marginTop = '1rem';
 
-    await wcProvider.connect();
+    // <-- Вот добавляем позиционирование и z-index:
+    btn.style.position = 'relative';
+    btn.style.zIndex = '20';
 
-    provider = new ethers.BrowserProvider(wcProvider);
-    signer = await provider.getSigner();
+    btn.onclick = function(e) {
+      if (localStorage.getItem('stickerDownloaded')) {
+        e.preventDefault();
+        alert('The link has already been used for downloading.');
+        return false;
+      }
+      // Отмечаем скачивание
+      localStorage.setItem('stickerDownloaded', 'true');
+      // Можно сразу скрыть кнопку
+      btn.style.display = 'none';
+      alert('Thanks for buying! Download has started.');
+    }
 
-    const address = await signer.getAddress();
-    alert("Wallet connected: " + address);
-    document.getElementById("wallet-address").textContent = address;
-    document.getElementById("buy-btn").disabled = false;
-  } catch (error) {
-    console.error("Ошибка подключения:", error);
-    alert("Ошибка подключения к кошельку");
+    const container = document.getElementById('stickerPackList');
+    container.parentNode.insertBefore(btn, container.nextSibling);
+  }
+  btn.style.display = 'inline-block';
+  btn.style.position = 'relative'; // на случай если уже есть btn
+  btn.style.zIndex = '20';
+}
+
+
+function hideDownloadButton() {
+  const btn = document.getElementById('downloadStickerBtn');
+  if (btn) btn.style.display = 'none';
+}
+
+function checkDownloadStatus() {
+  if (localStorage.getItem('stickerPurchased')) {
+    showDownloadButton();
+  } else {
+    hideDownloadButton();
   }
 }
 
-// Покупка стикерпаков
-async function buyStickers() {
-  try {
-    const token = new ethers.Contract(
-      TOKEN_ADDRESS,
-      [
-        "function balanceOf(address) view returns (uint256)",
-        "function transfer(address to, uint256 amount) returns (bool)",
-      ],
-      signer
-    );
-
-    const address = await signer.getAddress();
-    const balance = await token.balanceOf(address);
-
-    if (balance < REQUIRED_AMOUNT) {
-      alert("Недостаточно MCGA. Нужно минимум 10 MCGA.");
+async function buyStickerPack(event) {
+  if (typeof window.ethereum === 'undefined') {
+    if (isMobile()) {
+      const currentUrl = window.location.href.replace(/^https?:\/\//, '');
+      window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
+      return;
+    } else {
+      alert('Please install MetaMask to use this feature.');
       return;
     }
-
-    const tx = await token.transfer(PAYMENT_ADDRESS, REQUIRED_AMOUNT);
-    await tx.wait();
-
-    const link = await getOneTimeDownloadLink();
-    if (link) {
-      alert("Спасибо за покупку! Ваша ссылка: " + link);
-      window.open(link, "_blank");
-    } else {
-      alert("Ошибка при получении ссылки.");
-    }
-  } catch (error) {
-    console.error("Ошибка при покупке:", error);
-    alert("Ошибка при покупке. Проверьте консоль.");
   }
-}
 
-// Получение одноразовой ссылки через Supabase
-async function getOneTimeDownloadLink() {
+  const web3 = new Web3(window.ethereum);
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  const accounts = await web3.eth.getAccounts();
+  const token = new web3.eth.Contract(ABI, tokenAddress);
+
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?used=eq.false&limit=1`, {
-      headers: {
-        apikey: SUPABASE_API_KEY,
-        Authorization: `Bearer ${SUPABASE_API_KEY}`,
-      },
-    });
-
-    const data = await res.json();
-    if (data.length === 0) return null;
-
-    const row = data[0];
-
-    // помечаем как использованную
-    await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${row.id}`, {
-      method: "PATCH",
-      headers: {
-        apikey: SUPABASE_API_KEY,
-        Authorization: `Bearer ${SUPABASE_API_KEY}`,
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
-      body: JSON.stringify({ used: true }),
-    });
-
-    return row.url;
-  } catch (error) {
-    console.error("Ошибка при получении ссылки:", error);
-    return null;
+    await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
+    alert("Transaction successful!");
+    localStorage.setItem('stickerPurchased', 'true'); // отметка покупки
+    showDownloadButton();
+  } catch (err) {
+    alert('Transaction failed or cancelled.');
+    console.error(err);
   }
 }
 
-// Экспортируем функции на кнопку
-globalThis.connectWallet = connectWallet;
-globalThis.buyStickers = buyStickers;
-</script>
+// Инициализация при загрузке страницы
+window.addEventListener('load', () => {
+  checkDownloadStatus();
+});
 
+function showPreview(el) {
+  const preview = el.querySelector('.sticker-preview');
+  if (preview) preview.classList.remove('hidden');
+}
+
+function hidePreview(el) {
+  const preview = el.querySelector('.sticker-preview');
+  if (preview) preview.classList.add('hidden');
+}
+
+function toggleStickerList() {
+  const list = document.getElementById('stickerPackList');
+  if (list.classList.contains('hidden')) {
+    list.classList.remove('hidden');
+  } else {
+    list.classList.add('hidden');
+  }
+}
+</script>
 </body>
 </html>
