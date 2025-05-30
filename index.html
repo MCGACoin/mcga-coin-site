@@ -434,6 +434,7 @@ async function buyStickerPack(event) {
       alert('Please install MetaMask to use this feature.');
       return;
     }
+    console.log('buyStickerPack triggered');
   }
 
   const web3 = new Web3(window.ethereum);
