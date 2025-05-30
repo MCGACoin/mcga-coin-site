@@ -346,10 +346,12 @@ async function showDownloadButton(link) {
 
     btn.onclick = async function(e) {
       e.preventDefault();
+       console.log('Download button clicked, href:', btn.href);
 
       // Проверим в Supabase, не использован ли токен уже
       const url = new URL(btn.href);
       const token = url.searchParams.get('token');
+      console.log('Token extracted from URL:', token);
       if (!token) {
         alert('Invalid download link.');
         return false;
@@ -376,6 +378,7 @@ async function showDownloadButton(link) {
         .from('stickers_links')
         .update({ used: true, used_at: new Date().toISOString() })
         .eq('token', token);
+      console.log('Supabase insert data:', data, 'error:', error);
 
       if (updateError) {
         alert('Failed to mark the link as used.');
@@ -446,6 +449,7 @@ async function buyStickerPack(event) {
 
     // Создаем уникальную одноразовую ссылку в Supabase
     const oneTimeLink = await createOneTimeLink();
+     console.log('Generated one-time link:', oneTimeLink);
     if (oneTimeLink) {
       await showDownloadButton(oneTimeLink);
     } else {
