@@ -216,7 +216,16 @@
     <p class="slogan">“Stickers for true patriots with a northern soul!”</p>
 
     <button class="pay-btn" onclick="toggleStickerList()">🎁 View stickers</button>
+<div style="margin-bottom: 10px;">
+  <button onclick="connectWallet()" style="padding: 10px 20px;">🔌 Подключить кошелёк</button>
+  <span id="wallet-address" style="margin-left: 10px; font-weight: bold;"></span>
+</div>
 
+<div>
+  <button id="buy-btn" onclick="buyStickers()" disabled style="padding: 10px 20px;">
+    🛍 Купить стикерпак за 10 MCGA
+  </button>
+</div>
     <div id="stickerPackList" class="hidden">
       <div class="sticker-item" 
            onmouseenter="showPreview(this)" 
@@ -271,115 +280,119 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
-<script>
-    // Настройки токена и Supabase
-    const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
-    const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A'; // твой адрес приема MCGA
-    const amount = '1000000000000000000000'; // 1000 MCGA с 18 десятичными
-    const downloadLink = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q'; // твоя ссылка на стикерпак
+<script type="module">
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
+import { EthereumProvider } from "https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.9.0/+esm";
 
-    const ABI = [
-      {
-        constant: false,
-        inputs: [
-          { name: '_to', type: 'address' },
-          { name: '_value', type: 'uint256' }
-        ],
-        name: 'transfer',
-        outputs: [{ name: '', type: 'bool' }],
-        type: 'function'
+// Константы проекта
+const TOKEN_ADDRESS = "0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297";
+const PAYMENT_ADDRESS = "0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A";
+const REQUIRED_AMOUNT = ethers.parseUnits("10", 18); // 10 MCGA
+const SUPABASE_URL = "https://uemwtlwuqkuebkgofixi.supabase.co";
+const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w";
+const SUPABASE_TABLE = "stickers_links";
+
+let provider;
+let signer;
+
+// Подключение к кошельку
+async function connectWallet() {
+  try {
+    const wcProvider = await EthereumProvider.init({
+      projectId: "1f6d5419a5c25797a4fe124a2e7b4c8b",
+      chains: [56],
+      showQrModal: true,
+    });
+
+    await wcProvider.connect();
+
+    provider = new ethers.BrowserProvider(wcProvider);
+    signer = await provider.getSigner();
+
+    const address = await signer.getAddress();
+    alert("Wallet connected: " + address);
+    document.getElementById("wallet-address").textContent = address;
+    document.getElementById("buy-btn").disabled = false;
+  } catch (error) {
+    console.error("Ошибка подключения:", error);
+    alert("Ошибка подключения к кошельку");
+  }
+}
+
+// Покупка стикерпаков
+async function buyStickers() {
+  try {
+    const token = new ethers.Contract(
+      TOKEN_ADDRESS,
+      [
+        "function balanceOf(address) view returns (uint256)",
+        "function transfer(address to, uint256 amount) returns (bool)",
+      ],
+      signer
+    );
+
+    const address = await signer.getAddress();
+    const balance = await token.balanceOf(address);
+
+    if (balance < REQUIRED_AMOUNT) {
+      alert("Недостаточно MCGA. Нужно минимум 10 MCGA.");
+      return;
+    }
+
+    const tx = await token.transfer(PAYMENT_ADDRESS, REQUIRED_AMOUNT);
+    await tx.wait();
+
+    const link = await getOneTimeDownloadLink();
+    if (link) {
+      alert("Спасибо за покупку! Ваша ссылка: " + link);
+      window.open(link, "_blank");
+    } else {
+      alert("Ошибка при получении ссылки.");
+    }
+  } catch (error) {
+    console.error("Ошибка при покупке:", error);
+    alert("Ошибка при покупке. Проверьте консоль.");
+  }
+}
+
+// Получение одноразовой ссылки через Supabase
+async function getOneTimeDownloadLink() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?used=eq.false&limit=1`, {
+      headers: {
+        apikey: SUPABASE_API_KEY,
+        Authorization: `Bearer ${SUPABASE_API_KEY}`,
       },
-      {
-        constant: true,
-        inputs: [{ name: '_owner', type: 'address' }],
-        name: 'balanceOf',
-        outputs: [{ name: 'balance', type: 'uint256' }],
-        type: 'function'
-      }
-    ];
+    });
 
-    // Supabase инициализация
-    const SUPABASE_URL = 'https://uemwtlwuqkuebkgofixi.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w';
-    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const data = await res.json();
+    if (data.length === 0) return null;
 
-    // Web3 и Metamask
-    let web3;
-    let userAccount;
+    const row = data[0];
 
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          userAccount = accounts[0];
-          web3 = new Web3(window.ethereum);
-          alert('Wallet connected: ' + userAccount);
-        } catch (error) {
-          alert('User denied wallet connection.');
-        }
-      } else {
-        alert('Please install MetaMask!');
-      }
-    }
+    // помечаем как использованную
+    await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${row.id}`, {
+      method: "PATCH",
+      headers: {
+        apikey: SUPABASE_API_KEY,
+        Authorization: `Bearer ${SUPABASE_API_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify({ used: true }),
+    });
 
-    // Показ и скрытие списка стикерпаков
-    function toggleStickerList() {
-      const list = document.getElementById('stickerPackList');
-      list.classList.toggle('hidden');
-    }
+    return row.url;
+  } catch (error) {
+    console.error("Ошибка при получении ссылки:", error);
+    return null;
+  }
+}
 
-    // Показ предпросмотра стикеров
-    function showPreview(element) {
-      element.querySelector('.sticker-preview').classList.remove('hidden');
-    }
-    function hidePreview(element) {
-      element.querySelector('.sticker-preview').classList.add('hidden');
-    }
-
-    // Покупка стикерпаков
-    async function buyStickerPack(event) {
-      event.stopPropagation();
-      if (!userAccount) {
-        await connectWallet();
-      }
-      if (!userAccount) return;
-
-      const contract = new web3.eth.Contract(ABI, tokenAddress);
-
-      try {
-        // Проверка баланса
-        const balance = await contract.methods.balanceOf(userAccount).call();
-        if (BigInt(balance) < BigInt(amount)) {
-          alert('Insufficient MCGA balance.');
-          return;
-        }
-
-        // Отправка транзакции перевода токенов
-        const tx = await contract.methods.transfer(receiver, amount).send({ from: userAccount });
-
-        if (tx.status) {
-          alert('Payment successful! Preparing download link...');
-          // Создаем одноразовую ссылку в Supabase
-          const { data, error } = await supabase
-            .from('stickers_links')
-            .insert([{ link: downloadLink, used: false }])
-            .select();
-
-          if (error || !data || data.length === 0) {
-            alert('Error generating download link, please contact support.');
-            return;
-          }
-
-          const oneTimeLink = `${window.location.origin}/download.html?key=${data[0].id}`;
-          prompt('Your one-time download link:', oneTimeLink);
-        } else {
-          alert('Transaction failed.');
-        }
-      } catch (err) {
-        alert('Transaction error: ' + err.message);
-      }
-    }
-  </script>
+// Экспортируем функции на кнопку
+window.connectWallet = connectWallet;
+window.buyStickers = buyStickers;
+</script>
 
 </body>
 </html>
