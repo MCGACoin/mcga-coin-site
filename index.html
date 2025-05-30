@@ -323,7 +323,6 @@ async function createOneTimeLink(userWallet) {
   .insert([{
     token: token,
     used: false,
-    created_at: new Date().toISOString(),
     user_wallet: userWallet,
     link: downloadUrl
   }]);
