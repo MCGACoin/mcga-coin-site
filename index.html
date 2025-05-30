@@ -317,9 +317,11 @@ async function createOneTimeLink() {
   const downloadUrl = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q?token=' + token;
 
   // Записываем token в Supabase, с info о том, что не использован
+   console.log('Inserting token:', token);
   const { data, error } = await supabaseClient
     .from('stickers_links')
     .insert([{ token: token, used: false, created_at: new Date().toISOString() }]);
+  console.log('Insert result:', data, error);
 
   if (error) {
     console.error('Supabase insert error:', error);
@@ -359,6 +361,7 @@ async function showDownloadButton(link) {
       }
 
       // Проверка токена в базе
+     
       const { data, error } = await supabaseClient
         .from('stickers_links')
         .select('*')
