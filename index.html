@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <title>MCGA Coin</title>
   <style>
     body {
@@ -271,7 +269,7 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
 const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
@@ -281,8 +279,7 @@ const amount = '1000000000000000000000'; // 1000 MCGA (18 decimals)
 // Supabase config
 const SUPABASE_URL = 'https://uemwtlwuqkuebkgofixi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ABI = [
   {
     constant: false,
@@ -320,7 +317,7 @@ async function createOneTimeLink() {
   const downloadUrl = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q?token=' + token;
 
   // Записываем token в Supabase, с info о том, что не использован
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('stickers_links')
     .insert([{ token: token, used: false, created_at: new Date().toISOString() }]);
 
@@ -359,7 +356,7 @@ async function showDownloadButton(link) {
       }
 
       // Проверка токена в базе
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('stickers_links')
         .select('*')
         .eq('token', token)
@@ -375,7 +372,7 @@ async function showDownloadButton(link) {
       }
 
       // Отмечаем токен как использованный
-      const { error:updateError } = await supabase
+      const { error:updateError } = await supabaseClient
         .from('stickers_links')
         .update({ used: true, used_at: new Date().toISOString() })
         .eq('token', token);
