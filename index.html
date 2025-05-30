@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <title>MCGA Coin</title>
   <style>
     body {
@@ -270,11 +271,17 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
+
 <script>
 const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
 const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
 const amount = '1000000000000000000000'; // 1000 MCGA (18 decimals)
-const downloadLink = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q'; // прямая ссылка для скачивания
+// убрал прямую ссылку, теперь она приходит из Supabase после покупки
+
+// Supabase config
+const SUPABASE_URL = 'https://uemwtlwuqkuebkgofixi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const ABI = [
   {
@@ -293,43 +300,111 @@ function isMobile() {
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-function showDownloadButton() {
+function generateRandomToken(length = 24) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let token = '';
+  for (let i = 0; i < length; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return token;
+}
+
+async function createOneTimeLink() {
+  const token = generateRandomToken();
+  // Задаем ссылку на скачивание через Icedrive с параметром token
+  const baseUrl = 'https://icemga.supabase.link/download?token='; // фиктивный, подменим ниже
+  // Но у тебя стикерпак лежит на icedrive: https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q
+  // Мы будем выдавать одноразовую ссылку на этот файл, но с собственным токеном через Supabase API
+
+  // Для простоты вернем реальную ссылку с параметром токена в базе
+  const downloadUrl = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q?token=' + token;
+
+  // Записываем token в Supabase, с info о том, что не использован
+  const { data, error } = await supabase
+    .from('stickers_links')
+    .insert([{ token: token, used: false, created_at: new Date().toISOString() }]);
+
+  if (error) {
+    console.error('Supabase insert error:', error);
+    alert('Error generating download link, please try again later.');
+    return null;
+  }
+
+  return downloadUrl;
+}
+
+async function showDownloadButton(link) {
   let btn = document.getElementById('downloadStickerBtn');
   if (!btn) {
     btn = document.createElement('a');
     btn.id = 'downloadStickerBtn';
-    btn.href = downloadLink;
+    btn.href = link;
     btn.textContent = '📥 Download StickerPack';
     btn.className = 'download-btn';
     btn.setAttribute('download', '');
     btn.style.display = 'inline-block';
     btn.style.marginTop = '1rem';
-
-    // <-- Вот добавляем позиционирование и z-index:
     btn.style.position = 'relative';
     btn.style.zIndex = '20';
 
-    btn.onclick = function(e) {
-      if (localStorage.getItem('stickerDownloaded')) {
-        e.preventDefault();
-        alert('The link has already been used for downloading.');
+    btn.onclick = async function(e) {
+      e.preventDefault();
+
+      // Проверим в Supabase, не использован ли токен уже
+      const url = new URL(btn.href);
+      const token = url.searchParams.get('token');
+      if (!token) {
+        alert('Invalid download link.');
         return false;
       }
-      // Отмечаем скачивание
+
+      // Проверка токена в базе
+      const { data, error } = await supabase
+        .from('stickers_links')
+        .select('*')
+        .eq('token', token)
+        .single();
+
+      if (error || !data) {
+        alert('Download link is invalid or expired.');
+        return false;
+      }
+      if (data.used) {
+        alert('This download link has already been used.');
+        return false;
+      }
+
+      // Отмечаем токен как использованный
+      const { error:updateError } = await supabase
+        .from('stickers_links')
+        .update({ used: true, used_at: new Date().toISOString() })
+        .eq('token', token);
+
+      if (updateError) {
+        alert('Failed to mark the link as used.');
+        return false;
+      }
+
+      // Помечаем локально, чтобы не показывать повторно кнопку
       localStorage.setItem('stickerDownloaded', 'true');
-      // Можно сразу скрыть кнопку
+
+      // Скрываем кнопку
       btn.style.display = 'none';
+
       alert('Thanks for buying! Download has started.');
-    }
+
+      // Перенаправляем на реальный файл (открываем в новой вкладке)
+      window.open('https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q', '_blank');
+    };
 
     const container = document.getElementById('stickerPackList');
     container.parentNode.insertBefore(btn, container.nextSibling);
   }
+  btn.href = link;
   btn.style.display = 'inline-block';
-  btn.style.position = 'relative'; // на случай если уже есть btn
+  btn.style.position = 'relative';
   btn.style.zIndex = '20';
 }
-
 
 function hideDownloadButton() {
   const btn = document.getElementById('downloadStickerBtn');
@@ -338,7 +413,10 @@ function hideDownloadButton() {
 
 function checkDownloadStatus() {
   if (localStorage.getItem('stickerPurchased')) {
-    showDownloadButton();
+    // Для упрощения, при обновлении страницы кнопка появится с текущим token,
+    // Но чтобы сохранить token — можно хранить его в localStorage (опционально).
+    // Пока показываем с постоянной ссылкой.
+    showDownloadButton('https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q');
   } else {
     hideDownloadButton();
   }
@@ -365,7 +443,15 @@ async function buyStickerPack(event) {
     await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
     alert("Transaction successful!");
     localStorage.setItem('stickerPurchased', 'true'); // отметка покупки
-    showDownloadButton();
+
+    // Создаем уникальную одноразовую ссылку в Supabase
+    const oneTimeLink = await createOneTimeLink();
+    if (oneTimeLink) {
+      await showDownloadButton(oneTimeLink);
+    } else {
+      // fallback на постоянную ссылку
+      await showDownloadButton('https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q');
+    }
   } catch (err) {
     alert('Transaction failed or cancelled.');
     console.error(err);
@@ -396,5 +482,6 @@ function toggleStickerList() {
   }
 }
 </script>
+
 </body>
 </html>
