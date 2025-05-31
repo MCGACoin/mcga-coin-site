@@ -307,26 +307,32 @@ function generateRandomToken(length = 24) {
 }
 
 async function createOneTimeLink(userWallet) {
+  const filePath = 'stickers/mcga_pack.zip'; // путь к файлу в Supabase Storage
   const token = generateRandomToken();
-  // Задаем ссылку на скачивание через Icedrive с параметром token
-  const baseUrl = 'https://icemga.supabase.link/download?token='; // фиктивный, подменим ниже
-  // Но у тебя стикерпак лежит на icedrive: https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q
-  // Мы будем выдавать одноразовую ссылку на этот файл, но с собственным токеном через Supabase API
 
-  // Для простоты вернем реальную ссылку с параметром токена в базе
-  const downloadUrl = 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q?token=' + token;
+  // 1. Получаем signed URL на 60 секунд
+  const { data: signedData, error: signedError } = await supabaseClient
+    .storage
+    .from('stickers') // имя bucket'а в Supabase
+    .createSignedUrl(filePath, 60); // 60 секунд жизни ссылки
 
-  // Записываем token в Supabase, с info о том, что не использован
-   console.log('Inserting token:', token, 'user_wallet:', userWallet);
+  if (signedError || !signedData?.signedUrl) {
+    console.error('Ошибка при генерации signed URL:', signedError);
+    alert('Error upload link.');
+    return null;
+  }
+
+  const signedUrl = signedData.signedUrl;
+
+  // 2. Записываем одноразовый токен в таблицу (для будущей проверки и метки used)
   const { data, error } = await supabaseClient
-  .from('stickers_links')
-  .insert([{
-    token: token,
-    used: false,
-    user_wallet: userWallet,
-    link: downloadUrl
-  }]);
-  console.log('Insert result:', data, error);
+    .from('stickers_links')
+    .insert([{
+      token: token,
+      used: false,
+      user_wallet: userWallet,
+      link: signedUrl
+    }]);
 
   if (error) {
     console.error('Supabase insert error:', error);
@@ -334,8 +340,10 @@ async function createOneTimeLink(userWallet) {
     return null;
   }
 
-  return downloadUrl;
+  // 3. Добавляем токен в query-параметры, чтобы дальше использовать в проверке
+  return signedUrl + '&token=' + token;
 }
+
 
 async function showDownloadButton(link) {
   console.log('Inside showDownloadButton, received link:', link);
