@@ -307,7 +307,7 @@ function generateRandomToken(length = 24) {
 }
 
 async function createOneTimeLink(userWallet) {
-  const filePath = 'stickers/mcga_pack.zip'; // путь к файлу в Supabase Storage
+  const filePath = 'mcga_pack.zip'; // путь к файлу в Supabase Storage
   const token = generateRandomToken();
 
   // 1. Получаем signed URL на 60 секунд
