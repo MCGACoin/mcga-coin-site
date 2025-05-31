@@ -397,8 +397,6 @@ async function showDownloadButton(link) {
   .eq('token', token);
 
 
-
-
       console.log('Supabase insert data:', data, 'error:', error);
 
       if (updateError) {
@@ -441,8 +439,6 @@ function checkDownloadStatus() {
     hideDownloadButton();
   }
 }
-
-
 
 async function buyStickerPack(event) {
    event.preventDefault();
