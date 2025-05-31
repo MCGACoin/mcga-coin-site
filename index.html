@@ -469,10 +469,12 @@ async function buyStickerPack(event) {
   const oneTimeLink = await createOneTimeLink(accounts[0]);
 console.log('Generated one-time link:', oneTimeLink);
 if (oneTimeLink) {
-  localStorage.setItem('stickerPurchased', 'true');
   localStorage.setItem('stickerLink', oneTimeLink);
-  await showDownloadButton(oneTimeLink);
-} else {
+  (async () => {
+    await showDownloadButton(oneTimeLink);
+  })();
+}
+ else {
   alert("Не удалось сгенерировать ссылку. Пожалуйста, попробуйте снова.");
 }
 
