@@ -441,8 +441,9 @@ function checkDownloadStatus() {
 }
 
 async function buyStickerPack(event) {
-   event.preventDefault();
+  event.preventDefault();
   event.stopPropagation();
+
   if (typeof window.ethereum === 'undefined') {
     if (isMobile()) {
       const currentUrl = window.location.href.replace(/^https?:\/\//, '');
@@ -452,9 +453,8 @@ async function buyStickerPack(event) {
       alert('Please install MetaMask to use this feature.');
       return;
     }
-    console.log('buyStickerPack triggered');
   }
-}
+
   const web3 = new Web3(window.ethereum);
   await window.ethereum.request({ method: 'eth_requestAccounts' });
   const accounts = await web3.eth.getAccounts();
@@ -463,25 +463,22 @@ async function buyStickerPack(event) {
   try {
     await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
     alert("Transaction successful!");
-    localStorage.setItem('stickerPurchased', 'true'); // отметка покупки
+    localStorage.setItem('stickerPurchased', 'true');
 
-    // Создаем уникальную одноразовую ссылку в Supabase
-  const oneTimeLink = await createOneTimeLink(accounts[0]);
-console.log('Generated one-time link:', oneTimeLink);
-if (oneTimeLink) {
-  localStorage.setItem('stickerLink', oneTimeLink);
-  (async () => {
-    await showDownloadButton(oneTimeLink);
-  })();
-}
- else {
-  alert("Не удалось сгенерировать ссылку. Пожалуйста, попробуйте снова.");
+    const oneTimeLink = await createOneTimeLink(accounts[0]);
+    console.log('Generated one-time link:', oneTimeLink);
+    if (oneTimeLink) {
+      localStorage.setItem('stickerLink', oneTimeLink);
+      showDownloadButton(oneTimeLink);
+    } else {
+      alert("Failed to generate link. Please try again.");
+    }
+  } catch (err) {
+    console.error('Transaction failed:', err);
+    alert('Transaction failed.');
+  }
 }
 
-// Инициализация при загрузке страницы
-window.addEventListener('load', () => {
-  checkDownloadStatus();
-});
 
 function showPreview(el) {
   const preview = el.querySelector('.sticker-preview');
@@ -501,6 +498,10 @@ function toggleStickerList() {
     list.classList.add('hidden');
   }
 }
+    // Инициализация при загрузке страницы
+window.addEventListener('load', () => {
+  checkDownloadStatus();
+});
 </script>
 
 </body>
