@@ -427,14 +427,13 @@ function hideDownloadButton() {
 
 function checkDownloadStatus() {
   if (localStorage.getItem('stickerPurchased')) {
-    // Для упрощения, при обновлении страницы кнопка появится с текущим token,
-    // Но чтобы сохранить token — можно хранить его в localStorage (опционально).
-    // Пока показываем с постоянной ссылкой.
-    showDownloadButton('https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q');
+    const link = localStorage.getItem('stickerLink') || 'https://icedrive.net/s/fNY1CQy7PjW3N3u62Y5S3552za9Q';
+    showDownloadButton(link);
   } else {
     hideDownloadButton();
   }
 }
+
 
 async function buyStickerPack(event) {
    event.preventDefault();
@@ -465,6 +464,8 @@ async function buyStickerPack(event) {
     const oneTimeLink = await createOneTimeLink(accounts[0]);
      console.log('Generated one-time link:', oneTimeLink);
     if (oneTimeLink) {
+        localStorage.setItem('stickerPurchased', 'true');
+        localStorage.setItem('stickerLink', oneTimeLink);
       await showDownloadButton(oneTimeLink);
     } else {
       // fallback на постоянную ссылку
