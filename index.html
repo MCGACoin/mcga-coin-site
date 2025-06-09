@@ -70,7 +70,23 @@
       color: white;
       padding: 2rem;
     }
-   .download-btn, .mudra-btn, .pay-btn {
+    .download-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f3f3f3;
+    color: #000;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin: 10px;
+    transition: background-color 0.25s ease;
+    min-width: 320px;
+  }
+
+/*   .download-btn, .mudra-btn, .pay-btn {
       display: inline-block;
       margin: 1rem auto;
       padding: 14px 28px;
@@ -83,12 +99,12 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       transition: transform 0.2s ease-in-out;
       cursor: pointer;
-    }
+    } */
     .download-btn img {
-    height: 48px;
-    width: 48px;
+    height: 38px;
+    width: 38px;
     object-fit: contain;
-    margin-right: 10px; }
+    margin-right: 12px; }
     
     .download-btn:hover, .mudra-btn:hover, .pay-btn:hover {
       transform: scale(1.05);
@@ -202,7 +218,7 @@
   </section>
 
 <a href="https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297&exactAmount=&exactField=INPUT" target="_blank" class="download-btn">
-  <img src="https://cryptologos.cc/logos/pancakeswap-cake-logo.png?v=029" alt="PancakeSwap">
+  <img src="https://assets.coingecko.com/coins/images/12632/small/pancakeswap.png" alt="PancakeSwap">
   Buy MCGA Coin
 </a>
 
