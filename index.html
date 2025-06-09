@@ -86,8 +86,8 @@
       cursor: pointer;
     }
     .download-btn img {
-    height: 68px;
-    width: 68px;
+    height: 78px;
+    width: 78px;
     object-fit: contain;
     margin-right: 12px; }
     
@@ -113,62 +113,13 @@
     .social-icon img:hover {
       transform: scale(1.1);
     }
-       .sticker-item {
-      border: 2px solid #ccc;
-      padding: 1rem;
-      margin-top: 1rem;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      transition: box-shadow 0.2s ease;
-      background-color: #fafafa;
-    }
 
-    .sticker-item:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .sticker-info {
-      text-align: left;
-    }
-
-    .sticker-info button {
-      margin-top: 0.5rem;
-      background-color: #388e3c;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-     .sticker-info button:hover {
-      background-color: #2e7d32;
-    }
-     .sticker-preview {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background: white;
-      border: 1px solid #ddd;
-      padding: 0.5rem;
-      display: flex;
-      gap: 0.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      margin-top: 0.5rem;
-      z-index: 10;
-    }
-        .slogan {
+           .slogan {
       font-style: italic;
       color: #888;
       font-size: 0.95rem;
     }
-     .sticker-preview img {
-      width: 60px;
-      border-radius: 6px;
-    }
+
   </style>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 </head>
@@ -203,7 +154,7 @@
   </section>
 
 <a href="https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297&exactAmount=&exactField=INPUT" target="_blank" class="download-btn">
-  <img src="assets/cake-token.svg" alt="PancakeSwap">
+  <img src="assets/Pancakelogo.svg" alt="PancakeSwap">
   Buy MCGA
 </a>
 
@@ -221,32 +172,6 @@
     <p>This certificate represents the liquidity lock of MCGA Coin, ensuring long-term stability and security for our holders.</p>
     <a href="https://mudra.website/?certificate=yes&type=0&lp=0x8e6354d60d43003cc019bc31129dc5cdc150f0df" target="_blank" class="mudra-btn">🔒 View Certificate on Mudra</a>
   </section>
-<!--    <section class="tokenomics">
-  <h2>MCGA Stickers: A real Canadian vibe!</h2>
-  <p>Pick your sticker pack below and decorate your Telegram the Canadian way 🍁</p>
-  <p class="slogan">“Stickers for true patriots with a northern soul!”</p>
-
-  <button class="pay-btn" onclick="toggleStickerList()">🎁 View stickers</button>
-
-<div id="stickerPackList" class="hidden">
-  <div class="sticker-item" 
-       onmouseenter="showPreview(this)" 
-       onmouseleave="hidePreview(this)">
-       
-    <div class="sticker-info">
-      <p><strong>MCGA Starter Pack</strong></p>
-      <p>1000 MCGA</p>
-      <button onclick="buyStickerPack(event)">Select</button>
-    </div>
-    
-    <div class="sticker-preview hidden">
-        <img src="https://i.imgur.com/V0pCT8E.png" alt="Sticker 1">
-        <img src="https://i.imgur.com/cgPlaRb.jpeg" alt="Sticker 2">
-        <img src="https://i.imgur.com/bMb0Wld.jpeg" alt="Sticker 3">
-      </div>
-    </div>
-  </div>
-     </section> -->
 
   <section class="social-section">
     <h2>Follow Us</h2>
@@ -282,240 +207,6 @@
   <footer>
     <p>&copy; 2025 MCGA Coin. All rights reserved.</p>
   </footer>
-<!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
-<!--  <script>
-const tokenAddress = '0xEBAF33c5c4966f4b182F1a239AEBEBc713C9E297';
-const receiver = '0xA47dEfE7Fa31361a027F214D8eBb13ABf1484C4A';
-const amount = '10000000000000000000'; // 1000 MCGA (18 decimals)
-// убрал прямую ссылку, теперь она приходит из Supabase после покупки
-
-// Supabase config
-const SUPABASE_URL = 'https://uemwtlwuqkuebkgofixi.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbXd0bHd1cWt1ZWJrZ29maXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MDEwODAsImV4cCI6MjA2NDE3NzA4MH0.aJYiypjUQ5gl_VOrkwu9dNb3YspdoTvoV_kLT2FX-0w';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ABI = [
-  {
-    constant: false,
-    inputs: [
-      { name: '_to', type: 'address' },
-      { name: '_value', type: 'uint256' }
-    ],
-    name: 'transfer',
-    outputs: [{ name: '', type: 'bool' }],
-    type: 'function'
-  }
-];
-
-function isMobile() {
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
-
-function generateRandomToken(length = 24) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let token = '';
-  for (let i = 0; i < length; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
-}
-
-async function createOneTimeLink(userWallet) {
-  const filePath = 'mcga_pack.zip'; // путь к файлу в Supabase Storage
-  const token = generateRandomToken();
-
-  // 1. Получаем signed URL на 60 секунд
-  const { data: signedData, error: signedError } = await supabaseClient
-    .storage
-    .from('stickers') // имя bucket'а в Supabase
-    .createSignedUrl(filePath, 60); // 60 секунд жизни ссылки
-
-  if (signedError || !signedData?.signedUrl) {
-    console.error('Ошибка при генерации signed URL:', signedError);
-    alert('Error upload link.');
-    return null;
-  }
-
-  const signedUrl = signedData.signedUrl;
-
-  // 2. Записываем одноразовый токен в таблицу (для будущей проверки и метки used)
-  const { data, error } = await supabaseClient
-    .from('stickers_links')
-    .insert([{
-      token: token,
-      used: false,
-      user_wallet: userWallet,
-      link: signedUrl
-    }]);
-
-  if (error) {
-    console.error('Supabase insert error:', error);
-    alert('Error generating download link, please try again later.');
-    return null;
-  }
-
-  // 3. Добавляем токен в query-параметры, чтобы дальше использовать в проверке
-  return signedUrl + '&token=' + token;
-}
-
-
-async function showDownloadButton(link) {
-  console.log('Inside showDownloadButton, received link:', link);
-  let btn = document.getElementById('downloadStickerBtn');
-  if (!btn) {
-    btn = document.createElement('a');
-    btn.id = 'downloadStickerBtn';
-    btn.href = link;
-    btn.textContent = '📥 Download StickerPack';
-    btn.className = 'download-btn';
-    btn.setAttribute('download', '');
-    btn.style.display = 'inline-block';
-    btn.style.marginTop = '1rem';
-    btn.style.position = 'relative';
-    btn.style.zIndex = '20';
-
-    btn.onclick = async function(e) {
-      e.preventDefault();
-       console.log('Download button clicked, href:', btn.href);
-
-      // Проверим в Supabase, не использован ли токен уже
-      const url = new URL(btn.href);
-      const token = url.searchParams.get('token');
-      console.log('Token extracted from URL:', token);
-      if (!token) {
-        alert('Invalid download link.');
-        return false;
-      }
-
-      // Проверка токена в базе
-     
-      const { data, error } = await supabaseClient
-        .from('stickers_links')
-        .select('*')
-        .eq('token', token)
-        .single();
-
-      if (error || !data) {
-        alert('Download link is invalid or expired.');
-        return false;
-      }
-      if (data.used) {
-        alert('This download link has already been used.');
-        return false;
-      }
-
-      // Отмечаем токен как использованный
-   const { error: updateError } = await supabaseClient
-  .from('stickers_links')
-  .update({ used: true }) // убрали used_at
-  .eq('token', token);
-
-
-      console.log('Supabase insert data:', data, 'error:', error);
-
-      if (updateError) {
-        alert('Failed to mark the link as used.');
-        return false;
-      }
-
-      // Помечаем локально, чтобы не показывать повторно кнопку
-      localStorage.setItem('stickerDownloaded', 'true');
-
-      // Скрываем кнопку
-      btn.style.display = 'none';
-
-      alert('Thanks for buying! Download has started.');
-
-      // Перенаправляем на реальный файл (открываем в новой вкладке)
-      window.open(btn.href, '_blank');
-
-    };
-
-    const container = document.getElementById('stickerPackList');
-    container.parentNode.insertBefore(btn, container.nextSibling);
-  }
-  btn.href = link;
-  btn.style.display = 'inline-block';
-  btn.style.position = 'relative';
-  btn.style.zIndex = '20';
-}
-
-function hideDownloadButton() {
-  const btn = document.getElementById('downloadStickerBtn');
-  if (btn) btn.style.display = 'none';
-}
-
-function checkDownloadStatus() {
-  const link = localStorage.getItem('stickerLink');
-  if (localStorage.getItem('stickerPurchased') && link) {
-    showDownloadButton(link);
-  } else {
-    hideDownloadButton();
-  }
-}
-
-async function buyStickerPack(event) {
-  event.preventDefault();
-  event.stopPropagation();
-
-  if (typeof window.ethereum === 'undefined') {
-    if (isMobile()) {
-      const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-      window.location.href = `https://metamask.app.link/dapp/${currentUrl}`;
-      return;
-    } else {
-      alert('Please install MetaMask to use this feature.');
-      return;
-    }
-  }
-
-  const web3 = new Web3(window.ethereum);
-  await window.ethereum.request({ method: 'eth_requestAccounts' });
-  const accounts = await web3.eth.getAccounts();
-  const token = new web3.eth.Contract(ABI, tokenAddress);
-
-  try {
-    await token.methods.transfer(receiver, amount).send({ from: accounts[0] });
-    alert("Transaction successful!");
-    localStorage.setItem('stickerPurchased', 'true');
-
-    const oneTimeLink = await createOneTimeLink(accounts[0]);
-    console.log('Generated one-time link:', oneTimeLink);
-    if (oneTimeLink) {
-      localStorage.setItem('stickerLink', oneTimeLink);
-      showDownloadButton(oneTimeLink);
-    } else {
-      alert("Failed to generate link. Please try again.");
-    }
-  } catch (err) {
-    console.error('Transaction failed:', err);
-    alert('Transaction failed.');
-  }
-}
-
-
-function showPreview(el) {
-  const preview = el.querySelector('.sticker-preview');
-  if (preview) preview.classList.remove('hidden');
-}
-
-function hidePreview(el) {
-  const preview = el.querySelector('.sticker-preview');
-  if (preview) preview.classList.add('hidden');
-}
-
-function toggleStickerList() {
-  const list = document.getElementById('stickerPackList');
-  if (list.classList.contains('hidden')) {
-    list.classList.remove('hidden');
-  } else {
-    list.classList.add('hidden');
-  }
-}
-    // Инициализация при загрузке страницы
-window.addEventListener('load', () => {
-  checkDownloadStatus();
-});
-</script> -->
 
 </body>
 </html>
